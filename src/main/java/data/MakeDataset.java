@@ -1,7 +1,10 @@
 package data;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import game.Game;
 import mcts.ExampleUCT;
@@ -19,17 +22,23 @@ public class MakeDataset
 
 	public static void main(final String[] args)
 	{
-		// Games can also be run using the following approach, which will work for
-		// alternating-move AND simultaneous-move games.
-		// We'll demonstrate this with Hex (an alternating-move game), 
-		// and Rock-Paper-Scissors (a simultaneous-move game)
-		for 
-		(
-			final String gameName : new String[]{
-				"board/space/connection/Hex.lud", 
-				// "math/hand/Rock-Paper-Scissors.lud",
-				"Chess.lud"}
-		)
+		ArrayList<String> gamelist = new ArrayList<>();
+		try
+    	{
+			FileInputStream file = new FileInputStream(System.getProperty("user.dir") + "/games/games.txt");   
+			Scanner scanner = new Scanner(file);  
+			while(scanner.hasNextLine())
+			{
+				gamelist.add(scanner.nextLine());
+			}
+			scanner.close();    
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		for (final String gameName : gamelist)
 		{
 			Game game = GameLoader.loadGameFromName(gameName);
 			
