@@ -15,6 +15,9 @@ Project Organization
     │   ├── processed      <- The final, canonical data sets for modeling.
     │   └── raw            <- The original, immutable data dump.
     │
+    ├──games               <- List of games to produce data on
+    |   └── games.txt
+    |
     ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
     │                         generated with `pip freeze > requirements.txt`
     │
@@ -49,3 +52,16 @@ Project Organization
 --------
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+
+## How to launch it
+First run 
+```bash 
+make install
+``` 
+to install Ludii-1.3.11.jar in your .m2 repository. 
+
+Then just run 
+```bash
+make
+``` 
+everytime you want, for it to create data on the games you wrote in games.txt. It will only play a single game per game.
