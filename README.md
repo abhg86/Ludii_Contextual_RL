@@ -41,11 +41,6 @@ Project Organization
     |       |       └── utilsGsonV2.java
     |       |
     │       └── resouces   <- Local dependency for Ludii (Ludii.jar)
-    │    
-    │   
-    │
-    ├── main
-    |   ├── resources      <- local repository for maven local dependency management
     |
     ├── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
     │
