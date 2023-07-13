@@ -69,6 +69,12 @@ target/
 # VS Code
 .vscode/
 
+# bloop
+.bloop/
+
+# metals
+.metals/
+
 # Spyder
 .spyproject/
 

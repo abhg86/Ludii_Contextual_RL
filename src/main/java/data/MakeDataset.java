@@ -48,7 +48,7 @@ public class MakeDataset
 			
 			System.out.println("We're playing " + game.name() + "!");
 			
-			// Create and init two UCT agents
+			// Create and init two agents
 			final List<AI> ais = new ArrayList<AI>(3);
 			ais.add(null);
 			ais.add(new ExampleUCT());
