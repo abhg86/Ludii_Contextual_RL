@@ -1,8 +1,19 @@
 .DEFAULT_GOAL := exec
-.PHONY :install exec
+.PHONY :install exec test compile
+
+NUM_RUN = 1
 
 install:
 	mvn install:install-file -Dfile=src/main/resources/Ludii-1.3.11.jar -DgroupId=org.Ludii -DartifactId=Ludii -Dversion=1.3.11 -Dpackaging=jar -DgeneratePom=true
 
+compile:
+	mvn clean compile
+
 exec:
-	mvn compile exec:java
+	parallel mvn exec:java -Dexec.arguments="{1},$(NUM_RUN)" ::: $(shell seq 1 1272)
+
+test:
+	parallel mvn exec:java -Dexec.arguments="{1},$(NUM_RUN)" ::: $(shell seq 7 8)
+
+combine:
+	mvn exec:java@second-cli

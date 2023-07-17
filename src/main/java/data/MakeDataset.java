@@ -1,10 +1,7 @@
 package data;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import game.Game;
 import mcts.ExampleUCT;
@@ -13,34 +10,20 @@ import other.GameLoader;
 import other.context.Context;
 import other.model.Model;
 import other.trial.Trial;
-import random.RandomAI;
+import main.FileHandling;
 
 
 
 public class MakeDataset
 {
-
 	public static void main(final String[] args)
 	{
-		ArrayList<String> gamelist = new ArrayList<>();
-		try
-    	{
-			FileInputStream file = new FileInputStream(System.getProperty("user.dir") + "/games/games.txt");   
-			Scanner scanner = new Scanner(file);  
-			while(scanner.hasNextLine())
-			{
-				gamelist.add(scanner.nextLine());
-			}
-			scanner.close();    
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-		}
+		String[] gameList = FileHandling.listGames();
 
-		for (final String gameName : gamelist)
+		for (int i=0; i<Integer.valueOf(args[1]); i++)
 		{
-			Game game = GameLoader.loadGameFromName(gameName);
+
+			Game game = GameLoader.loadGameFromName(gameList[Integer.valueOf(args[0])]);
 			
 			Trial trial = new Trial(game);
 			Context context = new Context(game, trial);
@@ -51,10 +34,10 @@ public class MakeDataset
 			// Create and init two agents
 			final List<AI> ais = new ArrayList<AI>(3);
 			ais.add(null);
-			ais.add(new ExampleUCT());
-			ais.add(new RandomAI());
-			ais.get(1).initAI(game, 1);
-			ais.get(2).initAI(game, 2);
+			for (int j=1; j<=game.players().size(); j++){
+				ais.add(new ExampleUCT());
+				ais.get(j).initAI(game, j);
+			}
 			
 			// This model object is the thing that will handle control flow for us
 			final Model model = context.model();
@@ -110,10 +93,9 @@ public class MakeDataset
 			}
 			
 			// let's see what the result is
-			System.out.println(context.trial().status());
+			// System.out.println(context.trial().status());
 		}
 	}
-	
 }
 
 

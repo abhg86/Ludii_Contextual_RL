@@ -14,9 +14,6 @@ Project Organization
     │   ├── interim        <- Intermediate data that has been transformed.
     │   ├── processed      <- The final, canonical data sets for modeling.
     │   └── raw            <- The original, immutable data dump.
-    │
-    ├──games               <- List of games to produce data on
-    |   └── games.txt
     |
     ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
     │                         generated with `pip freeze > requirements.txt`
@@ -51,7 +48,7 @@ Project Organization
 
 --------
 
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>.</small></p>
 
 ## How to launch it
 First run 
@@ -60,8 +57,21 @@ make install
 ``` 
 to install Ludii-1.3.11.jar in your .m2 repository. 
 
+(I don't know if necessary but) you can compile the java code with 
+```bash
+make compile
+```
+
 Then just run 
 ```bash
 make
 ``` 
-everytime you want, for it to create data on the games you wrote in games.txt. It will only play a single game per game.
+everytime you want, for it to create data on all the games possible in Ludii. It will play NUM_RUN runs per game.
+
+Finally you can join each singular dataset into one big dataset with 
+```bash
+make combine
+```
+It will take all data from data/raw and combine them into one big dataset named combined.
+
+/!\ It will not erase the previous combined dataset if it exists.

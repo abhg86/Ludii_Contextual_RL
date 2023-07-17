@@ -36,9 +36,20 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.4.0</version>
-                <configuration>
-                    <mainClass>data.MakeDataset</mainClass>
-                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <configuration>
+                            <mainClass>data.MakeDataset</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>second-cli</id>
+                        <configuration>
+                            <mainClass>utils.CombineFiles</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

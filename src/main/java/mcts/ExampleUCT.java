@@ -241,7 +241,7 @@ public class ExampleUCT extends AI
 	public void initAI(final Game game, final int playerID)
 	{
 		this.player = playerID;
-		utilGsonV2.buildGson("data/raw/data.jsonl");	// build the Gson object
+		utilGsonV2.buildGson("data/raw/data_" + game.name() + ".jsonl");	// build the Gson object
 
 	}
 	

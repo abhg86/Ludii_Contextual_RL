@@ -44,7 +44,6 @@ public class utilGsonV2 {
 
     /**
      * Builds the Gson object used to serialize and deserialize the states
-     * Takes into account the state instance creator as well as all the subtypes used in the State class (Containers and Owned) that needs to be registered
      * @return the Gson object 
      */
     public static  Gson buildGson(String fileLocation) {
@@ -55,6 +54,10 @@ public class utilGsonV2 {
         return gson;
     }
 
+    public static void modifyFileLocation(String fileLocation) {
+        utilGsonV2.fileLocation = fileLocation;
+    }
+
     /**
      * Writes the tuple at the end of the file
      * @param TupleAI tuple (i.e. a tuple of the form (State, Move, string description of the game)
@@ -62,36 +65,24 @@ public class utilGsonV2 {
      */
     public static void writeTupleToFile(TupleAI tuple, Context context) {
         File file = new File(fileLocation);
-        
-        
-        // exists(): Tests whether the file or directory denoted by this abstract pathname exists.
+
         if (!file.exists()) {
         
             try {
                 File directory = new File(file.getParent());
                 if (!directory.exists()) {
-                    
-                    // mkdirs(): Creates the directory named by this abstract pathname, including any necessary but nonexistent parent directories.
-                    // Note that if this operation fails it may have succeeded in creating some of the necessary parent directories.
                     directory.mkdirs();
                 }
-                
-                // createNewFile(): Atomically creates a new, empty file named by this abstract pathname if and only if a file with this name does not yet exist.
-                // The check for the existence of the file and the creation of the file if it does not exist are a single operation
-                // that is atomic with respect to all other filesystem activities that might affect the file.
                 file.createNewFile();
             } catch (IOException e) {
                 System.out.println("Exception Occurred: " + e.toString());
             }
         }
         
-        try {
-            
-            // Convenience class for writing character files
+        try {            
             FileWriter writer;
             writer = new FileWriter(file.getAbsoluteFile(), true);
             
-            // Writes text to a character-output stream
             BufferedWriter bufferWriter = new BufferedWriter(writer);
 
             if (supportedPlayers == null) {
@@ -108,9 +99,6 @@ public class utilGsonV2 {
             TupleIntermediaryV2 tupleMoveInString = new TupleIntermediaryV2(featureSet.computeFeatureVector(context, tuple.b, true).toString(),tuple.b.toTrialFormat(context),tuple.c);
             bufferWriter.write(gson.toJson(tupleMoveInString).toString());
             bufferWriter.newLine();
-
-            // If you want to write the data in bytes, uncomment the following line
-            // bufferWriter.write((String) gson.toJson(SerializationUtils.serialize(gson.toJson(tupleList).toString())));
             bufferWriter.close();
         } catch (IOException e) {
             
@@ -118,14 +106,48 @@ public class utilGsonV2 {
         }
     }
 
+    public static void writeTupleToFile(TupleIntermediaryV2 tuple){
+        File file = new File(fileLocation);
+
+        if (!file.exists()) {
+        
+            try {
+                File directory = new File(file.getParent());
+                if (!directory.exists()) {
+                    directory.mkdirs();
+                }
+                file.createNewFile();
+            } catch (IOException e) {
+                System.out.println("Exception Occurred: " + e.toString());
+            }
+        }
+        
+        try {            
+            FileWriter writer;
+            writer = new FileWriter(file.getAbsoluteFile(), true);
+            
+            BufferedWriter bufferWriter = new BufferedWriter(writer);
+
+            bufferWriter.write(gson.toJson(tuple).toString());
+            bufferWriter.newLine();
+            bufferWriter.close();
+        } catch (IOException e) {
+            
+            System.out.println("Hmm.. Got an error while saving data to file " + e.toString());
+        }
+    }
+
+    public static void addTuples(List<TupleIntermediaryV2> tuppleList){
+        for (TupleIntermediaryV2 tupple : tuppleList) {
+            writeTupleToFile(tupple);
+        }
+    }
+
     /**
      * Reads the tuples from the file
-     * @return a TupleAI list (i.e. a list of tuples with a state, a move and a description of the game in string format)
+     * @return a TupleIntermediaryV2 list (i.e. a list of tuples with a state, a move and a description of the game in string format)
      */
     public static List<TupleIntermediaryV2> readTuplesFromFile() {
-        
-        // File: An abstract representation of file and directory pathnames.
-        // User interfaces and operating systems use system-dependent pathname strings to name files and directories.
         File file = new File(fileLocation);
         
         if (!file.exists())
@@ -153,6 +175,33 @@ public class utilGsonV2 {
 		return null;
     }
 
+    /**
+     * Rewrites the tuples from the file given to the file used when creating the Gson object
+     */
+    public static void rewrite(String filepath1) {
+        File file = new File(filepath1);
+        
+        if (!file.exists())
+            System.out.println("File doesn't exist");
+        
+        InputStreamReader isReader;
+        try {
+            isReader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
+            
+            JsonReader myReader = new JsonReader(isReader);
+            try {
+                while (true){
+                    utilGsonV2.writeTupleToFile(gson.fromJson(myReader, TupleIntermediaryV2.class));
+                }
+            } catch (Exception e) {
+                // To catch EOF exception
+                // System.out.println(e);
+            }
+            
+        } catch (Exception e) {
+            System.out.println("error load cache from file " + e.toString());
+        }
+    }
 // TESTS
 //
     // public static void main(final String[] args){
