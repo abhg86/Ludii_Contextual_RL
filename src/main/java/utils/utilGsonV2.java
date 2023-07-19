@@ -39,6 +39,7 @@ import features.generation.AtomicFeatureGenerator;
  */
 public class utilGsonV2 {
     private static String fileLocation;
+    private static String resultFileLocation;
     private static Gson gson;
     private static int[] supportedPlayers;
 
@@ -46,8 +47,9 @@ public class utilGsonV2 {
      * Builds the Gson object used to serialize and deserialize the states
      * @return the Gson object 
      */
-    public static  Gson buildGson(String fileLocation) {
+    public static  Gson buildGson(String fileLocation, String resultFileLocation) {
         utilGsonV2.fileLocation = fileLocation;
+        utilGsonV2.resultFileLocation = resultFileLocation;
         GsonBuilder gsonbld = new GsonBuilder();
         Gson gson = gsonbld.create();
         utilGsonV2.gson = gson;
@@ -137,6 +139,37 @@ public class utilGsonV2 {
         }
     }
 
+    public static void writeResult(float result){
+        File file = new File(resultFileLocation);
+
+        if (!file.exists()) {
+        
+            try {
+                File directory = new File(file.getParent());
+                if (!directory.exists()) {
+                    directory.mkdirs();
+                }
+                file.createNewFile();
+            } catch (IOException e) {
+                System.out.println("Exception Occurred: " + e.toString());
+            }
+        }
+        
+        try {            
+            FileWriter writer;
+            writer = new FileWriter(file.getAbsoluteFile(), true);
+            
+            BufferedWriter bufferWriter = new BufferedWriter(writer);
+
+            bufferWriter.write(gson.toJson(result).toString());
+            bufferWriter.newLine();
+            bufferWriter.close();
+        } catch (IOException e) {
+            
+            System.out.println("Hmm.. Got an error while saving data to file " + e.toString());
+        }
+    }
+
     public static void addTuples(List<TupleIntermediaryV2> tuppleList){
         for (TupleIntermediaryV2 tupple : tuppleList) {
             writeTupleToFile(tupple);
@@ -178,26 +211,40 @@ public class utilGsonV2 {
     /**
      * Rewrites the tuples from the file given to the file used when creating the Gson object
      */
-    public static void rewrite(String filepath1) {
-        File file = new File(filepath1);
+    public static void rewrite(String filepathdata, String filepathresult) {
+        File fileData = new File(filepathdata);
+        File fileResult = new File(filepathresult);
         
-        if (!file.exists())
+        if (!fileData.exists())
             System.out.println("File doesn't exist");
         
-        InputStreamReader isReader;
+        if (!fileResult.exists())
+            System.out.println("File doesn't exist");
+
+        InputStreamReader isReaderData;
+        InputStreamReader isReaderResult;
         try {
-            isReader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
+            isReaderData = new InputStreamReader(new FileInputStream(fileData), StandardCharsets.UTF_8);
+            isReaderResult = new InputStreamReader(new FileInputStream(fileResult), StandardCharsets.UTF_8);
             
-            JsonReader myReader = new JsonReader(isReader);
+            JsonReader myReaderData = new JsonReader(isReaderData);
+            JsonReader myReaderResult = new JsonReader(isReaderResult);
             try {
                 while (true){
-                    utilGsonV2.writeTupleToFile(gson.fromJson(myReader, TupleIntermediaryV2.class));
+                    utilGsonV2.writeTupleToFile(gson.fromJson(myReaderData, TupleIntermediaryV2.class));
                 }
             } catch (Exception e) {
                 // To catch EOF exception
                 // System.out.println(e);
             }
-            
+            try {
+                while (true){
+                    utilGsonV2.writeResult(gson.fromJson(myReaderResult, Float.class));
+                }
+            } catch (Exception e) {
+                // To catch EOF exception
+                // System.out.println(e);
+            }
         } catch (Exception e) {
             System.out.println("error load cache from file " + e.toString());
         }

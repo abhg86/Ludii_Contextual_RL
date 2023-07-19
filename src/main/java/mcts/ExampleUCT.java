@@ -127,10 +127,15 @@ public class ExampleUCT extends AI
 		}
 		
 		// Return the move we wish to play
-		Move move = finalMoveSelection(root);
+		Move chosenMove = finalMoveSelection(root);
 		// Store the tuple in a file
-		utilGsonV2.writeTupleToFile(new TupleAI(context.state(), (Move) move, game.description().expanded()), context);
-		return move;
+		utilGsonV2.writeTupleToFile(new TupleAI(context.state(), (Move) chosenMove, game.description().expanded()), context);
+		utilGsonV2.writeResult(1);
+		for (Move move : context.moves(context).moves()){
+			utilGsonV2.writeTupleToFile(new TupleAI(context.state(), (Move) move, game.description().expanded()), context);
+			utilGsonV2.writeResult(0);
+		}
+		return chosenMove;
 	}
 	
 	/**
@@ -241,7 +246,7 @@ public class ExampleUCT extends AI
 	public void initAI(final Game game, final int playerID)
 	{
 		this.player = playerID;
-		utilGsonV2.buildGson("data/raw/data_" + game.name() + ".jsonl");	// build the Gson object
+		utilGsonV2.buildGson("data/raw/data_" + game.name() + ".jsonl", "data/raw/result_" + game.name() + ".jsonl");	// build the Gson object
 
 	}
 	
